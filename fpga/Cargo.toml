@@ -1,0 +1,15 @@
+[package]
+name = "fpga"
+version = "0.1.0"
+authors = ["Matthijs Brobbel <m1brobbel@gmail.com>"]
+edition = "2018"
+
+[features]
+default = []
+opae = ["fpga-opae"]
+xrt = ["fpga-xrt"]
+
+[dependencies]
+fpga-core = { path = "../fpga-core" }
+fpga-opae = { path = "../fpga-opae", optional = true }
+fpga-xrt = { path = "../fpga-xrt", optional = true }

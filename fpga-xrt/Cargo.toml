@@ -1,0 +1,17 @@
+[package]
+name = "fpga-xrt"
+version = "0.1.0"
+authors = ["Matthijs Brobbel <m1brobbel@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+fpga-core = { path = "../fpga-core" }
+libc = "0.2"
+log = "0.4"
+uuid = "0.8"
+
+[build-dependencies]
+bindgen = "0.58"
+flate2 = "1.0"
+reqwest = { version = "0.11", features = ["blocking"] }
+tar = "0.4"

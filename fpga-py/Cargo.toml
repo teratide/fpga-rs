@@ -1,0 +1,13 @@
+[package]
+name = "fpga-py"
+version = "0.1.0"
+authors = ["Matthijs Brobbel <m1brobbel@gmail.com>"]
+edition = "2018"
+
+[lib]
+name = "fpga_py"
+crate-type = ["cdylib"]
+
+[dependencies]
+fpga = { path = "../fpga", features = ["opae", "xrt"] }
+pyo3 = { version = "0.14.1", features = ["extension-module"] }

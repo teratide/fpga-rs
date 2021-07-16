@@ -1,0 +1,8 @@
+[workspace]
+members = [
+  "fpga",
+  "fpga-core",
+  "fpga-opae",
+  "fpga-py",
+  "fpga-xrt",
+]

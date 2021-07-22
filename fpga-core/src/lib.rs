@@ -1,4 +1,4 @@
-use std::{error::Error, io::Read};
+use std::error::Error;
 
 pub trait Platform: Sized {
     const NAME: &'static str;

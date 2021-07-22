@@ -5,6 +5,7 @@ authors = ["Matthijs Brobbel <m1brobbel@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+fpga-core = { path = "../fpga-core" }
 log = "0.4"
 uuid = "0.8"
 

@@ -34,14 +34,17 @@ fn uuid_static() -> Result<(), Box<dyn Error>> {
 fn boost_static() -> Result<(), Box<dyn Error>> {
     // Build and link static boost, using the script provided by XRT.
     // Static libs are installed in OUT_DIR/boost/xrt/lib.
-    Command::new("sh")
-        .arg("-c")
-        .arg(format!(
-            "xrt/src/runtime_src/tools/scripts/boost.sh -prefix {}/boost",
-            env::var("OUT_DIR")?
-        ))
-        .spawn()?
-        .wait_with_output()?;
+    // todo(mb)
+    if !PathBuf::from(format!("{}/boost/xrt/lib", env::var("OUT_DIR")?)).exists() {
+        Command::new("sh")
+            .arg("-c")
+            .arg(format!(
+                "xrt/src/runtime_src/tools/scripts/boost.sh -prefix {}/boost",
+                env::var("OUT_DIR")?
+            ))
+            .spawn()?
+            .wait_with_output()?;
+    }
 
     // Add path of static boost libs to linker search.
     println!(
@@ -50,7 +53,10 @@ fn boost_static() -> Result<(), Box<dyn Error>> {
     );
 
     // Set boot env for xrt build.
-    env::set_var("XRT_BOOST_INSTALL", format!("{}/boost/xrt", env::var("OUT_DIR")?));
+    env::set_var(
+        "XRT_BOOST_INSTALL",
+        format!("{}/boost/xrt", env::var("OUT_DIR")?),
+    );
 
     Ok(())
 }
@@ -60,18 +66,22 @@ fn main() -> Result<(), Box<dyn Error>> {
     boost_static()?;
 
     let xrt_coreutil_static = cmake::Config::new("xrt/src")
-        .env("XRT_BOOST_INSTALL", format!("{}/boost/xrt", env::var("OUT_DIR")?))
         .build_target("xrt_coreutil_static")
         .build();
 
-    println!("cargo:rustc-link-search=native={}/build/runtime_src/core/common", xrt_coreutil_static.display());
+    println!(
+        "cargo:rustc-link-search=native={}/build/runtime_src/core/common",
+        xrt_coreutil_static.display()
+    );
 
     let xrt_core_static = cmake::Config::new("xrt/src")
-        .env("XRT_BOOST_INSTALL", format!("{}/boost/xrt", env::var("OUT_DIR")?))
         .build_target("xrt_core_static")
         .build();
 
-    println!("cargo:rustc-link-search=native={}/build/runtime_src/core/pcie/linux", xrt_core_static.display());
+    println!(
+        "cargo:rustc-link-search=native={}/build/runtime_src/core/pcie/linux",
+        xrt_core_static.display()
+    );
 
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);
     cxx_build::bridge("src/ffi.rs")
@@ -90,9 +100,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!("cargo:rustc-link-arg=-Wl,--whole-archive");
     println!("cargo:rustc-link-arg=-lxrt_core_static");
     println!("cargo:rustc-link-arg=-Wl,--no-whole-archive");
-    
+
     println!("cargo:rustc-link-lib=static=xrt_coreutil_static");
-    
+
     println!("cargo:rustc-link-arg=-Wl,--whole-archive");
     println!("cargo:rustc-link-arg=-lrt");
     println!("cargo:rustc-link-arg=-lpthread");
@@ -104,26 +114,6 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     println!("cargo:rustc-link-arg=-lc");
     println!("cargo:rustc-link-arg=-lstdc++");
-
-    // // Generate some bindings
-    // bindgen::Builder::default()
-    //     .header("xrt/src/runtime_src/core/include/xrt/xrt_uuid.h")
-    //     .clang_arg("-Ixrt/src/runtime_src/core/include/")
-    //     .allowlist_function("xrt.*")
-    //     .allowlist_type("xrt.*")
-    //     .allowlist_var("xrt.*")
-    //     .allowlist_function("xcl.*")
-    //     .allowlist_type("xcl.*")
-    //     .allowlist_var("xcl.*")
-    //     .rustified_enum(".*")
-    //     .derive_debug(true)
-    //     .derive_default(true)
-    //     .impl_debug(true)
-    //     .parse_callbacks(Box::new(bindgen::CargoCallbacks))
-    //     .generate()
-    //     .expect("failed to generate bindings")
-    //     .write_to_file(format!("{}/bindings.rs", env::var("OUT_DIR")?))
-    //     .expect("failed to write bindings");
 
     Ok(())
 }

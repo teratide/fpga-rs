@@ -1,6 +1,9 @@
 #include "src/ffi.h"
 // #include "fpga-xrt/src/ffi.rs.h"
 
+// todo(mb): remove
+#include <iostream>
+
 // Xclbin
 namespace xrt
 {
@@ -143,9 +146,11 @@ namespace xrt
   std::array<unsigned char, 16> Device::load_xclbin(const Xclbin &xclbin)
   {
     std::array<unsigned char, 16> array;
+    std::cout << "load_xclbin" << std::endl;
     xrt::xclbin input = xclbin;
-    xrt::uuid uuid = device::load_xclbin(input);
-    memcpy(array.data(), uuid.get(), sizeof(unsigned char) * 16);
+    auto uuid = xrt::device::load_xclbin(input).get();
+    std::cout << "load_xclbin done" << std::endl;
+    memcpy(array.data(), uuid, sizeof(unsigned char) * 16);
     return array;
   }
 }

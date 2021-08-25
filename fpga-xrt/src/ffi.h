@@ -1,8 +1,11 @@
 #pragma once
 #include "rust/cxx.h"
 
-#include "fpga-xrt/xrt/src/runtime_src/core/include/xrt/xrt_device.h"
-#include "fpga-xrt/xrt/src/runtime_src/core/include/xrt/xrt_kernel.h"
+#include "fpga-xrt/xrt/src/runtime_src/core/include/experimental/xrt_device.h"
+#include "fpga-xrt/xrt/src/runtime_src/core/include/experimental/xrt_kernel.h"
+
+// #include "fpga-xrt/xrt/src/runtime_src/core/include/xrt/xrt_device.h"
+// #include "fpga-xrt/xrt/src/runtime_src/core/include/xrt/xrt_kernel.h"
 
 #include "fpga-xrt/xrt/src/runtime_src/core/include/experimental/xrt_xclbin.h"
 

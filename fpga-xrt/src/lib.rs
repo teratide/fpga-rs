@@ -60,7 +60,8 @@ impl Program for Xrt {
     type Source = Xclbin;
     type Output = Uuid;
 
-    fn program(&mut self, source: Self::Source) -> Result<Self::Output> {
+    fn program(&mut self, source: &Self::Source) -> Result<Self::Output> {
+        // todo(mb): validate that the source targets this device
         Ok(Uuid::from_bytes(
             self.device.pin_mut().load_xclbin(&source.xclbin),
         ))

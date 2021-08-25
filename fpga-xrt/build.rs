@@ -2,6 +2,8 @@ use cc::Build;
 use glob::glob;
 use std::{env, error::Error, ffi::OsStr, path::PathBuf, process::Command};
 
+// xrt 202020.2.8.743
+
 fn uuid_static() -> Result<(), Box<dyn Error>> {
     // Build and link static uuid.
     glob("util-linux/libuuid/src/*.c")?

@@ -1,4 +1,4 @@
-use crate::ffi::{self, new_xclbin, xclbin_ip_get_name, xclbin_kernel_get_name};
+use crate::ffi::{self, new_xclbin};
 use cxx::UniquePtr;
 use std::{fmt::Debug, fs, path::Path};
 use uuid::Uuid;
@@ -10,31 +10,33 @@ pub struct Xclbin {
 impl Debug for Xclbin {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Xclbin")
-            .field("xsa_name", &self.get_xsa_name())
-            .field("uuid", &self.get_uuid())
+            .field("xsa_name", &self.xsa_name())
+            .field("uuid", &self.uuid())
             .finish()
     }
 }
 
 impl Xclbin {
-    pub fn get_xsa_name(&self) -> String {
-        self.xclbin.get_xsa_name()
+    pub fn xsa_name(&self) -> &str {
+        self.xclbin.xsa_name()
     }
 
-    pub fn get_kernels(&self) {
-        self.xclbin.get_kernels().iter().for_each(|kernel| {
-            println!("{}", xclbin_kernel_get_name(&kernel));
-        });
+    pub fn kernels(&self) {
+        dbg!(self.xclbin.kernels().len());
+        // self.xclbin.kernels().iter().for_each(|kernel| {
+        //     println!("{}", kernel.name());
+        // });
     }
 
-    pub fn get_ips(&self) {
-        self.xclbin.get_ips().iter().for_each(|ip| {
-            println!("{}", xclbin_ip_get_name(&ip));
-        });
+    pub fn ips(&self) {
+        dbg!(self.xclbin.ips().len());
+        // .iter().for_each(|ip| {
+        //     println!("{}", ip.name());
+        // });
     }
 
-    pub fn get_uuid(&self) -> Uuid {
-        Uuid::from_bytes(self.xclbin.get_uuid())
+    pub fn uuid(&self) -> Uuid {
+        Uuid::from_bytes(self.xclbin.uuid())
     }
 }
 

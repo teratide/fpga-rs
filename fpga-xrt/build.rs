@@ -88,6 +88,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);
     cxx_build::bridge("src/ffi.rs")
         .include(manifest_dir.join("xrt/src/runtime_src/core/include"))
+        // todo(mb): remove
+        .include(manifest_dir.join("xrt/src/runtime_src/"))
         .include(env::var("OUT_DIR")?)
         .include(manifest_dir)
         .file("src/ffi.cc")

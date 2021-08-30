@@ -233,7 +233,7 @@ pub struct DynamicRegions {
 }
 
 impl Xrt {
-    pub fn bdf(&self) -> String {
+    pub fn bdf(&self) -> &str {
         self.device.bdf()
     }
     pub fn interface_uuid(&self) -> Uuid {
@@ -248,7 +248,7 @@ impl Xrt {
     pub fn m2m(&self) -> bool {
         self.device.m2m()
     }
-    pub fn name(&self) -> String {
+    pub fn name(&self) -> &str {
         self.device.name()
     }
     pub fn nodma(&self) -> bool {
@@ -257,40 +257,40 @@ impl Xrt {
     pub fn offline(&self) -> bool {
         self.device.offline()
     }
-    pub fn electrical(&self) -> Electrical {
-        let mut electrical: Electrical = serde_json::from_str(&self.device.electrical()).unwrap();
-        electrical.power_rails = electrical
-            .power_rails
-            .into_iter()
-            .filter(|power| power.current.is_present || power.voltage.is_present)
-            .collect();
-        electrical
-    }
-    pub fn thermal(&self) -> Vec<Thermal> {
-        let thermals: Thermals = serde_json::from_str(&self.device.thermal()).unwrap();
-        thermals
-            .thermals
-            .into_iter()
-            .filter(|thermal| thermal.is_present)
-            .collect()
-    }
-    pub fn mechanical(&self) -> Mechanical {
-        serde_json::from_str(&self.device.mechanical()).unwrap()
-    }
-    pub fn memory(&self) -> Memory {
-        serde_json::from_str(&self.device.memory()).unwrap()
-    }
-    pub fn platform(&self) -> Platform {
-        let wrapper: Wrapper<Platform> = serde_json::from_str(&self.device.platform()).unwrap();
-        wrapper.inner
-    }
-    pub fn pcie_info(&self) -> PCIeInfo {
-        serde_json::from_str(&self.device.pcie_info()).unwrap()
-    }
-    pub fn host(&self) -> Host {
-        serde_json::from_str(&self.device.host()).unwrap()
-    }
-    pub fn dynamic_regions(&self) -> DynamicRegions {
-        serde_json::from_str(&self.device.dynamic_regions()).unwrap()
-    }
+    // pub fn electrical(&self) -> Electrical {
+    //     let mut electrical: Electrical = serde_json::from_str(&self.device.electrical()).unwrap();
+    //     electrical.power_rails = electrical
+    //         .power_rails
+    //         .into_iter()
+    //         .filter(|power| power.current.is_present || power.voltage.is_present)
+    //         .collect();
+    //     electrical
+    // }
+    // pub fn thermal(&self) -> Vec<Thermal> {
+    //     let thermals: Thermals = serde_json::from_str(&self.device.thermal()).unwrap();
+    //     thermals
+    //         .thermals
+    //         .into_iter()
+    //         .filter(|thermal| thermal.is_present)
+    //         .collect()
+    // }
+    // pub fn mechanical(&self) -> Mechanical {
+    //     serde_json::from_str(&self.device.mechanical()).unwrap()
+    // }
+    // pub fn memory(&self) -> Memory {
+    //     serde_json::from_str(&self.device.memory()).unwrap()
+    // }
+    // pub fn platform(&self) -> Platform {
+    //     let wrapper: Wrapper<Platform> = serde_json::from_str(&self.device.platform()).unwrap();
+    //     wrapper.inner
+    // }
+    // pub fn pcie_info(&self) -> PCIeInfo {
+    //     serde_json::from_str(&self.device.pcie_info()).unwrap()
+    // }
+    // pub fn host(&self) -> Host {
+    //     serde_json::from_str(&self.device.host()).unwrap()
+    // }
+    // pub fn dynamic_regions(&self) -> DynamicRegions {
+    //     serde_json::from_str(&self.device.dynamic_regions()).unwrap()
+    // }
 }

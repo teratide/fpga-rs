@@ -15,6 +15,9 @@ pub use xclbin::*;
 mod kernel;
 pub use kernel::*;
 
+mod ip;
+pub use ip::*;
+
 type Result<T> = std::result::Result<T, Exception>;
 
 pub struct Xrt {
@@ -22,16 +25,15 @@ pub struct Xrt {
 }
 
 impl Xrt {
-    pub fn kernel(&self, uuid: Uuid, name: &str) -> Kernel {
-        Kernel {
+    pub fn kernel(&self, uuid: Uuid, name: &str) -> Result<Kernel> {
+        Ok(Kernel {
             kernel: ffi::new_kernel(
                 &self.device,
                 *uuid.as_bytes(),
-                name.to_string(),
+                name,
                 ffi::kernel_cu_access_mode::exclusive,
-            )
-            .unwrap(),
-        }
+            )?,
+        })
     }
 }
 
@@ -63,26 +65,26 @@ impl Program for Xrt {
     fn program(&mut self, source: &Self::Source) -> Result<Self::Output> {
         // todo(mb): validate that the source targets this device
         Ok(Uuid::from_bytes(
-            self.device.pin_mut().load_xclbin(&source.xclbin),
+            self.device.pin_mut().load(&source.xclbin),
         ))
     }
 }
 
-impl Power for Xrt {
-    fn power(&self) -> f32 {
-        self.electrical().power_consumption_watts
-    }
-}
+// impl Power for Xrt {
+//     fn power(&self) -> f32 {
+//         self.electrical().power_consumption_watts
+//     }
+// }
 
-impl Thermal for Xrt {
-    fn temperature(&self) -> f32 {
-        self.thermal()
-            .into_iter()
-            .find(|thermal| thermal.location_id == "fpga0")
-            .map(|thermal| thermal.temp_c)
-            .unwrap_or_default() as f32
-    }
-}
+// impl Thermal for Xrt {
+//     fn temperature(&self) -> f32 {
+//         self.thermal()
+//             .into_iter()
+//             .find(|thermal| thermal.location_id == "fpga0")
+//             .map(|thermal| thermal.temp_c)
+//             .unwrap_or_default() as f32
+//     }
+// }
 
 impl std::fmt::Debug for Xrt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -95,14 +97,14 @@ impl std::fmt::Debug for Xrt {
             .field("name", &self.name())
             .field("nodma", &self.nodma())
             .field("offline", &self.offline())
-            .field("electrical", &self.electrical())
-            .field("thermal", &self.thermal())
-            .field("mechanical", &self.mechanical())
-            .field("memory", &self.memory())
-            .field("platform", &self.platform())
-            .field("pcie_info", &self.pcie_info())
-            .field("host", &self.host())
-            .field("dynamic_regions", &self.dynamic_regions())
+            // .field("electrical", &self.electrical())
+            // .field("thermal", &self.thermal())
+            // .field("mechanical", &self.mechanical())
+            // .field("memory", &self.memory())
+            // .field("platform", &self.platform())
+            // .field("pcie_info", &self.pcie_info())
+            // .field("host", &self.host())
+            // .field("dynamic_regions", &self.dynamic_regions())
             .finish()
     }
 }
@@ -113,12 +115,22 @@ impl Xrt {
     }
 
     pub fn from_device_index(index: usize) -> Result<Self> {
+        ffi::set_ini("Runtime.runtime_log", "null")?;
+
         Ok(Self {
             device: ffi::new_device(index as u32)?,
         })
     }
 
-    pub fn uuid(&self) -> Uuid {
+    pub fn from_bdf(bdf: &str) -> Result<Self> {
+        ffi::set_ini("Runtime.runtime_log", "null")?;
+
+        Ok(Self {
+            device: ffi::new_device_bdf(bdf)?,
+        })
+    }
+
+    pub fn xclbin_uuid(&self) -> Uuid {
         Uuid::from_bytes(self.device.xclbin_uuid())
     }
 }

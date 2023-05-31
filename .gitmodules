@@ -1,0 +1,8 @@
+[submodule "fpga-xrt/util-linux"]
+	path = fpga-xrt/util-linux
+	url = https://github.com/karelzak/util-linux.git
+	branch = stable/v2.37
+[submodule "fpga-xrt/xrt"]
+	path = fpga-xrt/xrt
+	url = https://github.com/xilinx/xrt.git
+	branch = master
